@@ -113,7 +113,7 @@ from .tasks import *
 CELERY_BEAT_SCHEDULE = {
     'task1': {
         'task': 'covidAPI.tasks.t1',
-        'schedule': timedelta(seconds = 5),
+        'schedule': timedelta(minutes = 5),
     },
     'task2' :{
         'task' : 'covidAPI.tasks.t2',
