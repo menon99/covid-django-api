@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 from celery.schedules import crontab
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -107,10 +108,16 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+from .tasks import *
+
 CELERY_BEAT_SCHEDULE = {
     'task1': {
-        'task': 'covidAPI.tasks.hello2',
-        'schedule': crontab(minute='*', hour='*'),
+        'task': 'covidAPI.tasks.t1',
+        'schedule': timedelta(seconds = 5),
+    },
+    'task2' :{
+        'task' : 'covidAPI.tasks.t2',
+        'schedule' : timedelta(seconds = 3),
     }
 }
 CELERY_TIMEZONE = 'Asia/Kolkata'
