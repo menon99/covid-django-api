@@ -1,7 +1,7 @@
 from celery import task
 from celery.utils.log import get_task_logger
 import os
-from analysis.utils import generateCSV,func1
+from analysis.utils import generateCSV,func1,generateGrowthCsv
 
 logger = get_task_logger(__name__)
 
@@ -19,5 +19,13 @@ def t2():
     try:
         func1()
         logger.info('Task 2 Done Boom')
+    except FileNotFoundError:
+        logger.info('CWD is ' + os.getcwd())
+
+@task()
+def t3():
+    try:
+        generateGrowthCsv()
+        logger.info('Growth generated')
     except FileNotFoundError:
         logger.info('CWD is ' + os.getcwd())
