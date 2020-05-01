@@ -3,9 +3,8 @@ import os
 import pandas as pd
 import requests
 import json
-from .utils import getJsonObject,getIndiaArima
+from .utils import getJsonObject, getIndiaArima, getStateArima
 # Create your views here.
-
 
 def hello(request):
 
@@ -22,15 +21,17 @@ def hello(request):
     }
     return JsonResponse(obj)
 
+
 def getState(state):
     p = state.split(' ')
-    
+
     for i in range(len(p)):
         q = p[i].capitalize()
         p[i] = q
-    
+
     state = ' '.join(p)
     return state
+
 
 def getR0(request, state):
 
@@ -65,7 +66,7 @@ def getGrowth(request, state):
 
     df = pd.read_csv('growth.csv')
     t1 = df[df['state'] == state]
-    
+
     obj = {
         'g1': t1['g1'][t1.index[0]],
         'g2': t1['g2'][t1.index[0]],
@@ -130,14 +131,13 @@ def getGrowthIndia(request):
 
 
 def indiaArima(request):
-    
+
     obj = getIndiaArima()
     return JsonResponse(obj)
 
 
-def stateArima(request,state):
+def stateArima(request, state):
 
     state = getState(state)
-    
-    obj = {}
+    obj = getStateArima(state)
     return JsonResponse(obj)

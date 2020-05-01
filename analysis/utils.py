@@ -212,6 +212,11 @@ def getDate(s):
     date = '2020-' + month_abbr[parts[1]] + '-' + parts[0]
     return date
 
+def getDate2(s):
+
+    parts = s.split('-')
+    date = month_abbr[parts[1]] + '/' + parts[0] + '/2020'
+    return date
 
 def generateGrowthCsv():
 
@@ -301,10 +306,14 @@ def getArima(confirmed, datetime_series):
     start_date = datetime_series.max()
     td = datetime.datetime.today() - start_date
 
-    arima = ARIMA(confirmed, order=(5, 1, 0))
-    arima = arima.fit(trend='c', full_output=True, disp=True)
-    forecast = arima.forecast(steps=(td.days + 15))
-    pred = list(forecast[0])
+    try:
+        arima = ARIMA(confirmed, order=(5, 1, 0))
+        arima = arima.fit(trend='c', full_output=True,
+                          disp=True, transparams=False)
+        forecast = arima.forecast(steps=(td.days + 10))
+        pred = list(forecast[0])
+    except:
+        pred = [confirmed[-1]] * (td.days + 10)
 
     return pred
 
@@ -331,6 +340,7 @@ def getIndiaArima():
 
     confirmed = []
     dates = []
+    dates2 = []
 
     for i in time_series:
         c = int(i['totalconfirmed'])
@@ -338,6 +348,8 @@ def getIndiaArima():
         d = i['date'].strip().split(' ')
         date = '2020-' + months[d[1].lower()] + '-' + d[0]
         dates.append(date)
+        date = months[d[1].lower()] + '/' + d[0] + '/2020'
+        dates2.append(date)
 
     datetime_series = pd.to_datetime(dates, infer_datetime_format=True)
 
@@ -351,7 +363,8 @@ def getIndiaArima():
     dates_l1 = getDates(len(pred_l1), l2)
 
     pred_l2 = getArima(confirmed, datetime_series)
-    dates_l2 = getDates(len(pred_l2),datetime_series.max())
+    dates_l2 = getDates(len(pred_l2), datetime_series.max())
+
 
     obj = {
         'pb': pred_before,
@@ -360,11 +373,64 @@ def getIndiaArima():
         'd1': dates_l1,
         'p2': pred_l2,
         'd2': dates_l2,
+        'actual' : confirmed,
+        'dates' : dates2
     }
 
     return obj
 
 ###########################################################
+
+def getStateArima(state):
+
+    temp_state = state.lower()
+
+    api_url = 'https://api.covid19india.org/v2/state_district_wise.json'
+    jsonObject = getJsonObject(api_url)
+
+    state_code = ''
+
+    for i in jsonObject:
+
+        if i['state'].lower() == temp_state:
+            state_code = i['statecode'].lower()
+            break
+
+    confirmed = []
+    dates = []
+    dates2 = []
+
+    api_url = 'https://api.covid19india.org/states_daily.json'
+    jsonObject = getJsonObject(api_url)
+    states_daily = jsonObject['states_daily']
+
+    flag = False
+
+    for i in states_daily:
+        if (int(i[state_code]) > 0 or flag) and i['status'] == 'Confirmed':
+            flag = True
+            dates.append(getDate(i['date']))
+            dates2.append(getDate2(i['date']))
+            if len(confirmed) > 0:
+                confirmed.append(confirmed[-1] + int(i[state_code]))
+            else:
+                confirmed.append(int(i[state_code]))
+
+    datetime_series = pd.to_datetime(dates, infer_datetime_format=True)
+
+    pred = getArima(confirmed, datetime_series)
+    dpred = getDates(len(pred), datetime_series.max())
+
+    obj = {
+        'pred' : pred,
+        'dp' : dpred,
+        'actual' : confirmed,
+        'dates' : dates2
+    }
+
+    return obj
+
+###############################################################
 
 def func1():
 
