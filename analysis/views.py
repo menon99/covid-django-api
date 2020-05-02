@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import requests
 import json
-from .utils import getJsonObject, getIndiaArima, getStateArima
+from .utils import getJsonObject, getIndiaArima, getStateArima, generateGrowthCsv, generateCSV
 # Create your views here.
 
 
@@ -143,3 +143,8 @@ def stateArima(request, state):
     state = getState(state)
     obj = getStateArima(state)
     return JsonResponse(obj)
+
+def updateCsv(request):
+
+    generateCSV()
+    generateGrowthCsv()
