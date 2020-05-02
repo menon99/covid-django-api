@@ -148,3 +148,4 @@ def updateCsv(request):
 
     generateCSV()
     generateGrowthCsv()
+    return JsonResponse({'status' : 200})
