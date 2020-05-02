@@ -27,8 +27,9 @@ def getState(state):
     p = state.split(' ')
 
     for i in range(len(p)):
-        q = p[i].capitalize()
-        p[i] = q
+        if p[i] != 'and':
+            q = p[i].capitalize()
+            p[i] = q
 
     state = ' '.join(p)
     return state
