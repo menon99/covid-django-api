@@ -6,6 +6,7 @@ import json
 from .utils import getJsonObject, getIndiaArima, getStateArima
 # Create your views here.
 
+
 def hello(request):
 
     path = os.getcwd().split('/')
@@ -43,7 +44,7 @@ def getR0(request, state):
         os.chdir('analysis/csv')
 
     df = pd.read_csv('reproductive_number.csv')
-    df.columns = ['date', 'state', 'ML', 'Low_90', 'High_90']
+    df.columns = ['date', 'ML', 'Low_90', 'High_90', 'state']
 
     temp = df[df['state'] == state]
 

@@ -165,8 +165,7 @@ def generateCSV():
                 data=[[date, state, confirmed]], columns=cols)
             df_statewise_timeseries = df_statewise_timeseries.append(df_row)
 
-    df_final = pd.DataFrame(
-        data=None, columns=['state', 'ML', 'Low_90', 'High_90'])
+    df_final = pd.DataFrame(data=None, columns=['ML', 'Low_90', 'High_90','state'])
 
     for i in df_statewise_timeseries['state'].unique():
         r = getR0(i, df_statewise_timeseries)
@@ -174,7 +173,6 @@ def generateCSV():
         df_final = df_final.append(r)
 
     path = os.getcwd().split('/')
-    print('path is ', path)
     if path[-1] != 'csv':
         os.chdir('analysis/csv')
 
