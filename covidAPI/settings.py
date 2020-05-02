@@ -103,29 +103,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CELERY_BROKER_URL = os.environ['REDIS_URL']
-#'redis://localhost:6379'  
-CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
-#'redis://localhost:6379' 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_BROKER_URL = os.environ['REDIS_URL']
+# #'redis://localhost:6379'  
+# CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+# #'redis://localhost:6379' 
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
 
-CELERY_BEAT_SCHEDULE = {
-    'task1': {
-        'task': 'covidAPI.tasks.t1',
-        'schedule': timedelta(hours=2),
-    },
-    'task2': {
-        'task': 'covidAPI.tasks.t3',
-        'schedule': timedelta(hours=2),
-    },
-    'task3': {
-        'task': 'covidAPI.tasks.t2',
-        'schedule': timedelta(seconds=5),
-    }
-}
-CELERY_TIMEZONE = 'Asia/Kolkata'
+# CELERY_BEAT_SCHEDULE = {
+#     'task1': {
+#         'task': 'covidAPI.tasks.t1',
+#         'schedule': timedelta(hours=2),
+#     },
+#     'task2': {
+#         'task': 'covidAPI.tasks.t3',
+#         'schedule': timedelta(hours=2),
+#     },
+#     'task3': {
+#         'task': 'covidAPI.tasks.t2',
+#         'schedule': timedelta(seconds=5),
+#     }
+# }
+# CELERY_TIMEZONE = 'Asia/Kolkata'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
