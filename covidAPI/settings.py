@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
+from .tasks import *
 import django_heroku
 from celery.schedules import crontab
 from datetime import timedelta
@@ -102,23 +103,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379'     #os.environ['REDIS_URL']
-CELERY_RESULT_BACKEND = 'redis://localhost:6379' #os.environ['REDIS_URL']
+CELERY_BROKER_URL = 'redis://localhost:6379'  # os.environ['REDIS_URL']
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'  # os.environ['REDIS_URL']
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-from .tasks import *
-
 CELERY_BEAT_SCHEDULE = {
     'task1': {
         'task': 'covidAPI.tasks.t1',
-        'schedule': timedelta(hours = 2),
+        'schedule': timedelta(hours=2),
     },
-    'task2' :{
-        'task' : 'covidAPI.tasks.t3',
-        'schedule' : timedelta(hours = 2),
+    'task2': {
+        'task': 'covidAPI.tasks.t3',
+        'schedule': timedelta(hours=2),
     },
+    'task3': {
+        'task': 'covidAPI.tasks.t2',
+        'schedule': timedelta(seconds=5),
+    }
 }
 CELERY_TIMEZONE = 'Asia/Kolkata'
 
