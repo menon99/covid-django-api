@@ -165,7 +165,8 @@ def generateCSV():
                 data=[[date, state, confirmed]], columns=cols)
             df_statewise_timeseries = df_statewise_timeseries.append(df_row)
 
-    df_final = pd.DataFrame(data=None, columns=['ML', 'Low_90', 'High_90','state'])
+    df_final = pd.DataFrame(
+        data=None, columns=['ML', 'Low_90', 'High_90', 'state'])
 
     for i in df_statewise_timeseries['state'].unique():
         r = getR0(i, df_statewise_timeseries)
@@ -210,11 +211,13 @@ def getDate(s):
     date = '2020-' + month_abbr[parts[1]] + '-' + parts[0]
     return date
 
+
 def getDate2(s):
 
     parts = s.split('-')
     date = month_abbr[parts[1]] + '/' + parts[0] + '/2020'
     return date
+
 
 def generateGrowthCsv():
 
@@ -363,7 +366,6 @@ def getIndiaArima():
     pred_l2 = getArima(confirmed, datetime_series)
     dates_l2 = getDates(len(pred_l2), datetime_series.max())
 
-
     obj = {
         'pb': pred_before,
         'db': dates_before,
@@ -371,13 +373,14 @@ def getIndiaArima():
         'd1': dates_l1,
         'p2': pred_l2,
         'd2': dates_l2,
-        'actual' : confirmed,
-        'dates' : dates2
+        'actual': confirmed,
+        'dates': dates2
     }
 
     return obj
 
 ###########################################################
+
 
 def getStateArima(state):
 
@@ -405,14 +408,17 @@ def getStateArima(state):
     flag = False
 
     for i in states_daily:
-        if (int(i[state_code]) > 0 or flag) and i['status'] == 'Confirmed':
-            flag = True
-            dates.append(getDate(i['date']))
-            dates2.append(getDate2(i['date']))
-            if len(confirmed) > 0:
-                confirmed.append(confirmed[-1] + int(i[state_code]))
-            else:
-                confirmed.append(int(i[state_code]))
+        try :
+            if (int(i[state_code]) > 0 or flag) and i['status'] == 'Confirmed':
+                flag = True
+                dates.append(getDate(i['date']))
+                dates2.append(getDate2(i['date']))
+                if len(confirmed) > 0:
+                    confirmed.append(confirmed[-1] + int(i[state_code]))
+                else:
+                    confirmed.append(int(i[state_code]))
+        except ValueError:
+            continue
 
     datetime_series = pd.to_datetime(dates, infer_datetime_format=True)
 
@@ -420,15 +426,16 @@ def getStateArima(state):
     dpred = getDates(len(pred), datetime_series.max())
 
     obj = {
-        'pred' : pred,
-        'dp' : dpred,
-        'actual' : confirmed,
-        'dates' : dates2
+        'pred': pred,
+        'dp': dpred,
+        'actual': confirmed,
+        'dates': dates2
     }
 
     return obj
 
 ###############################################################
+
 
 def func1():
 
