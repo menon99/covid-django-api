@@ -144,8 +144,14 @@ def stateArima(request, state):
     obj = getStateArima(state)
     return JsonResponse(obj)
 
-def updateCsv(request):
+
+def updateR0(request):
 
     generateCSV()
+    return JsonResponse({'status': 200})
+
+
+def updateGrowth(request):
+
     generateGrowthCsv()
-    return JsonResponse({'status' : 200})
+    return JsonResponse({'status': 200})
