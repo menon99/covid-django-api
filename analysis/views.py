@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import requests
 import json
-from .utils import getJsonObject, getIndiaArima, getStateArima, generateGrowthCsv, generateCSV
+from .utils import getJsonObject, getIndiaArima, getStateArima, generateGrowthCsv, generateCSV1, generateCSV2
 # Create your views here.
 
 
@@ -34,6 +34,16 @@ def getState(state):
     state = ' '.join(p)
     return state
 
+def processDates(d):
+    for i in range(len(d)):
+        t1 = d[i].split('-')
+        day = t1[2].split(' ')[0]
+        month = t1[1]
+        year = t1[0]
+        d[i] = month + '/' + day + '/' + year
+    return d
+
+
 
 def getR0(request, state):
 
@@ -50,7 +60,7 @@ def getR0(request, state):
     temp = df[df['state'] == state]
 
     obj = {}
-    obj['date'] = temp['date'].to_list()
+    obj['date'] = processDates(temp['date'].to_list())
     obj['high'] = temp['High_90'].to_list()
     obj['low'] = temp['Low_90'].to_list()
     obj['ml'] = temp['ML'].to_list()
@@ -145,9 +155,14 @@ def stateArima(request, state):
     return JsonResponse(obj)
 
 
-def updateR0(request):
+def updateR01(request):
 
-    generateCSV()
+    generateCSV1()
+    return JsonResponse({'status': 200})
+
+def updateR02(request):
+    
+    generateCSV2()
     return JsonResponse({'status': 200})
 
 

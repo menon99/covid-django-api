@@ -9,7 +9,6 @@ from scipy.interpolate import interp1d
 import datetime
 from statsmodels.tsa.arima_model import ARIMA
 
-
 def getJsonObject(url):
 
     headers = {'Content-Type': 'application/json'}
@@ -142,7 +141,7 @@ def check_state_name(s):
         return s
 
 
-def generateCSV():
+def generateCSV1():
 
     api_url = 'https://api.rootnet.in/covid19-in/stats/history'
     jsonObject = getJsonObject(api_url)
@@ -168,7 +167,7 @@ def generateCSV():
     df_final = pd.DataFrame(
         data=None, columns=['ML', 'Low_90', 'High_90', 'state'])
 
-    for i in df_statewise_timeseries['state'].unique():
+    for i in df_statewise_timeseries['state'].unique()[0:16]:
         r = getR0(i, df_statewise_timeseries)
         r['state'] = [i] * len(r)
         df_final = df_final.append(r)
@@ -178,6 +177,48 @@ def generateCSV():
         os.chdir('analysis/csv')
 
     df_final.to_csv('reproductive_number.csv')
+
+
+def generateCSV2():
+    
+    api_url = 'https://api.rootnet.in/covid19-in/stats/history'
+    jsonObject = getJsonObject(api_url)
+
+    data = jsonObject['data']
+
+    cols = ['date', 'state', 'confirmed']
+    df_statewise_timeseries = pd.DataFrame(data=None, columns=cols)
+
+    for i in data:
+
+        date = i['day']
+        regional = i['regional']
+
+        for j in regional:
+
+            state = check_state_name(j['loc'])
+            confirmed = int(j['totalConfirmed']) + 0.0
+            df_row = pd.DataFrame(
+                data=[[date, state, confirmed]], columns=cols)
+            df_statewise_timeseries = df_statewise_timeseries.append(df_row)
+
+    df_final = pd.DataFrame(
+        data=None, columns=['ML', 'Low_90', 'High_90', 'state'])
+
+    for i in df_statewise_timeseries['state'].unique()[16:]:
+        r = getR0(i, df_statewise_timeseries)
+        r['state'] = [i] * len(r)
+        df_final = df_final.append(r)
+
+    path = os.getcwd().split('/')
+    if path[-1] != 'csv':
+        os.chdir('analysis/csv')
+    
+    dff = pd.read_csv('reproductive_number.csv')
+    dff = dff.set_index("Unnamed: 0")
+    dff = dff.append(df_final)
+
+    dff.to_csv('reproductive_number.csv')
 
 ##########################################################
 
@@ -408,7 +449,7 @@ def getStateArima(state):
     flag = False
 
     for i in states_daily:
-        try :
+        try:
             if (int(i[state_code]) > 0 or flag) and i['status'] == 'Confirmed':
                 flag = True
                 dates.append(getDate(i['date']))
@@ -435,15 +476,3 @@ def getStateArima(state):
     return obj
 
 ###############################################################
-
-
-def func1():
-
-    path = os.getcwd().split('/')
-    if path[-1] != 'csv':
-        os.chdir('analysis/csv')
-    f = open('hello.txt', 'r')
-    contents = f.read()
-    i = int(contents.strip())
-    w = open('hello.txt', 'w')
-    w.write(str(i + 1))
