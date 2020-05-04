@@ -9,7 +9,6 @@ urlpatterns = [
     path('growth/<str:state>', getGrowth),
     path('arima/india', indiaArima),
     path('arima/<str:state>', stateArima),
-    path('update/rnaught/1', updateR01),
-    path('update/rnaught/2', updateR02),
+    path('update/rnaught/<int:num>', updateR0),
     path('update/growth', updateGrowth),
 ]
