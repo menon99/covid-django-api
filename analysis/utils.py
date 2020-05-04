@@ -141,7 +141,7 @@ def check_state_name(s):
         return s
 
 
-def generateCSV1():
+def generateCSV(num):
 
     api_url = 'https://api.rootnet.in/covid19-in/stats/history'
     jsonObject = getJsonObject(api_url)
@@ -167,45 +167,12 @@ def generateCSV1():
     df_final = pd.DataFrame(
         data=None, columns=['ML', 'Low_90', 'High_90', 'state'])
 
-    for i in df_statewise_timeseries['state'].unique()[0:16]:
-        r = getR0(i, df_statewise_timeseries)
-        r['state'] = [i] * len(r)
-        df_final = df_final.append(r)
+    if num != 8:
+        state_list = df_statewise_timeseries['state'].unique()[num * 4 - 4 : num * 4]
+    else:
+        state_list = df_statewise_timeseries['state'].unique()[num * 4 - 4 :]
 
-    path = os.getcwd().split('/')
-    if path[-1] != 'csv':
-        os.chdir('analysis/csv')
-
-    df_final.to_csv('reproductive_number.csv')
-
-
-def generateCSV2():
-    
-    api_url = 'https://api.rootnet.in/covid19-in/stats/history'
-    jsonObject = getJsonObject(api_url)
-
-    data = jsonObject['data']
-
-    cols = ['date', 'state', 'confirmed']
-    df_statewise_timeseries = pd.DataFrame(data=None, columns=cols)
-
-    for i in data:
-
-        date = i['day']
-        regional = i['regional']
-
-        for j in regional:
-
-            state = check_state_name(j['loc'])
-            confirmed = int(j['totalConfirmed']) + 0.0
-            df_row = pd.DataFrame(
-                data=[[date, state, confirmed]], columns=cols)
-            df_statewise_timeseries = df_statewise_timeseries.append(df_row)
-
-    df_final = pd.DataFrame(
-        data=None, columns=['ML', 'Low_90', 'High_90', 'state'])
-
-    for i in df_statewise_timeseries['state'].unique()[16:]:
+    for i in state_list:
         r = getR0(i, df_statewise_timeseries)
         r['state'] = [i] * len(r)
         df_final = df_final.append(r)
@@ -214,11 +181,13 @@ def generateCSV2():
     if path[-1] != 'csv':
         os.chdir('analysis/csv')
     
-    dff = pd.read_csv('reproductive_number.csv')
-    dff = dff.set_index("Unnamed: 0")
-    dff = dff.append(df_final)
-
-    dff.to_csv('reproductive_number.csv')
+    if num == 1:
+        df_final.to_csv('reproductive_number.csv')
+    else:
+        dff = pd.read_csv('reproductive_number.csv')
+        dff = dff.set_index("Unnamed: 0")
+        dff = dff.append(df_final)
+        dff.to_csv('reproductive_number.csv')
 
 ##########################################################
 
