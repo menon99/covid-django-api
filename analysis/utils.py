@@ -231,25 +231,6 @@ def getDate2(s):
 
 def generateGrowthCsv():
 
-    url = 'https://api.covid19india.org/data.json'
-    jsonObject = getJsonObject(url)
-
-    time_series = jsonObject['cases_time_series']
-
-    confirmed = []
-    dates = []
-
-    for i in time_series:
-        c = int(i['totalconfirmed'])
-        confirmed.append(c)
-        d = i['date'].strip().split(' ')
-        date = '2020-' + months[d[1].lower()] + '-' + d[0]
-        dates.append(date)
-
-    df = pd.DataFrame(data=None, columns=['g1', 'g2', 'current', 'state'])
-
-    df.append(getGrowth('India', confirmed, dates))
-
     url = 'https://api.covid19india.org/v2/state_district_wise.json'
     jsonObject = getJsonObject(url)
 
