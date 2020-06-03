@@ -207,9 +207,10 @@ def getGrowth(state, confirmed, dates):
             g1 = sum(growth_difference)/len(growth_difference)
         elif i != len(confirmed) - 1 and dates[i + 1] == lockdown2:
             g2 = sum(growth_difference)/len(growth_difference)
-
-    current_growth = sum(growth_difference)/len(growth_difference)
-
+    try:
+        current_growth = sum(growth_difference)/len(growth_difference)
+    except ZeroDivisionError:
+        current_growth = 0
     df = pd.DataFrame(data=[[round(g1, 3), round(g2, 3), round(current_growth, 3), state]], columns=[
                       'g1', 'g2', 'current', 'state'])
     return df
