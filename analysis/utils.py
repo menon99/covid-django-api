@@ -276,6 +276,8 @@ def generateGrowthCsv():
                     continue
         else:
             continue
+    
+    df = pd.DataFrame(data=None, columns=['g1', 'g2', 'current', 'state'])
 
     for state in state_growth.keys():
         confirmed = state_growth[state]['cases']
